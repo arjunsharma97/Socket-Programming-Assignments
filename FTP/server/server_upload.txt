@@ -1,0 +1,206 @@
+Seven Years and One Day:
+Sketching the Evolution of Internet Traffic
+Pierre Borgnat∗, Guillaume Dewaele∗, Kensuke Fukuda†, Patrice Abry∗ and Kenjiro Cho‡
+∗ CNRS, Univ. Lyon, Lab. Physique ENS Lyon, France. Email: {firstname.lastname}@ens-lyon.fr
+† National Institute of Informatics, Tokyo, Japan / PRESTO, JST. Email: kensuke@nii.ac.jp
+‡Internet Initiative Japan, Tokyo, Japan. Email: kjc@iijlab.net
+Abstract—This contribution aims at performing a longitudinal
+study of the evolution of the traffic collected every day for
+seven years on a trans-Pacific backbone link (the MAWI dataset).
+Long term characteristics are investigated both at TCP/IP layers
+(packet and flow attributes) and application usages. The analysis
+of this unique dataset provides new insights into changes in traffic
+statistics, notably on the persistence of Long Range Dependence,
+induced by the on-going increase in link bandwidth. Traffic in the
+MAWI dataset is subject to bandwidth changes, to congestions,
+and to a variety of anomalies. This allows the comparison of their
+impacts on the traffic statistics but at the same time significantly
+impairs long term evolution characterizations. To account for this
+difficulty, we show and explain how and why random projection
+(sketch) based analysis procedures provide practitioners with an
+efficient and robust tool to disentangle actual long term evolutions
+from time localized events such as anomalies and link congestions.
+Our central results consist in showing a strong and persistent long
+range dependence controlling jointly byte and packet counts. An
+additional study of a 24-hour trace complements the long-term
+results with the analysis of intraday variabilities.
+Keywords: Traffic Analysis; Longitudinal study; Sketch; Robust
+estimation; LRD
+I. INTRODUCTION
+The Internet is a fast evolving world, or beast, an implicit
+corrolary often stated being that its robust and sustainable analysis
+and modeling are impossible and that obtained results may
+prove to be outdated before being published. This contribution
+investigates some of the realities beyond this statement and
+proposes both methodological tools and objective elements of
+answers to shed light on these issues. We conduct longitudinal
+analyses of traffic statistics long-term evolutions, for traces
+collected every day, for 15 minutes, from 2001 to 2008, over
+trans-Pacific backbone links (the MAWI repository, providing
+publicly available anonymized traces [1]). Our first major
+observation is that packet and protocol characteristics remain
+stable along the years; on the application side, the changes
+of the applications used on the Internet does not seem to
+have a major impact on those characteristics. The statistics
+of aggregated packet or byte count timeseries at the TCP/IP
+layer are then analyzed, with focus on the evolutions with
+time of their marginal distributions (MDs) and of long range
+dependence (LRD). One key difficulty in performing statistical
+longitudinal analysis is to disentangle smooth long term
+0Work supported by Strategic International Cooperative Program between
+CNRS (France) and JST (Japan). All data used are publicly available at
+http://mawi.wide.ad.jp
+evolution features from day-to-day fluctuations, as there is no
+single day without anomalies or specific events. Therefore,
+our first contribution consists of proposing a robust estimation
+method based on sketches (random projections) [2], [3], that
+enables long term analyses without being affected by specific
+traffic conditions or anomalies. Applied to the 7-year long
+datasets, this robust estimation procedure brings new insights
+into the on-going debate related to bandwidth increase and
+statistical multiplexing causing the disappearance of long
+range dependence. The second contribution lies in finding
+that, once the impacts of local events such as anomalies
+and congestions are filtered out, the traffic statistics remain
+stable along years with persistent LRD and MDs being well
+modeled with Gamma laws. A concern with this longitudinal
+study is that data last only 15 min., starting systematically at
+2:00 pm. One may question the representativity w.r.t. both the
+natural intra-day variability and short duration observations. To
+address this, 24-hour traces were analyzed. We report results
+for data collected on March 19th 2008, as part of the Day
+in the life of the Internet project [4]. They confirm that the
+proposed analysis yields robust conclusions, biased neither by
+the specific schedule nor by short time measurements.
+II. RELATED WORK
+Longitudinal studies: Traffic analyses often consist of snapshot
+studies of application behaviors, for instance, focused
+on the impact of the latest killer application, likely to cause
+changes in traffic statistical characteristics, e.g., web [5], P2P
+[6], video streaming [7],... There have been fewer studies
+quantifying the long term evolution of Internet traffic (statistics
+and applications). One of them is based on NSFNET traces
+(1988-1993) [8]. At that time, FTP and Mail accounted for
+about half of the growing traffic volume, until web traffic
+becomes majority. More recently [9], relations between packet
+rate, bit rate, and traffic statistics are investigated based on
+more than 4000 traces collected from 1998 to 2003. In
+[10], traffic correlation structures before and after the web
+emergence are compared, showing that web traffic affects at
+least the finest time scales; however, evolution of longer range
+correlations (such as LRD) is not reported. A recent study
+focused on scanning activities on the LBL network for the
+past 12 years [11].
+Long Range Dependence: The discovery of LRD in Internet
+traffic was epoch-making and raised fundamental issues
+This full text paper was peer reviewed at the direction of IEEE Communications Society subject matter experts for publication in the IEEE INFOCOM 2009 proceedings.
+978-1-4244-3513-5/09/$25.00 ©2009 IEEE 711
+[12], [13]. Specifically, a characteristic related to LRD is the
+high variability of traffic fluctuations, yielding degradations
+of queueing performance [14]. Difficulties in empirically assessing
+LRD in real traffic time series have been thoroughly
+discussed [15]–[17], showing the relevance of a waveletbased
+analysis framework [16]. However, stability (or even
+existence) of LRD traffic is an ongoing debate and claims were
+made predicting its disappearance on backbone or when loads
+increase (cf. e.g., [18], [19]). A number of authors discussed
+the fact that LRD in Internet traffic can be induced by higherlayer
+protocols [10], [15], as well as related to the heavy tail
+natures of the distributions of the file size to be transferred
+[5], [12]. The (heavy)-tail behaviors of IP flow size have
+been continuously investigated (see e.g., [20]). However, the
+practical validity of the control of LRD of heavy-tail in actual
+traffic has only been assessed in recent studies [21] as (heavy)-
+tail behaviors of IP flow size is an elusive characteristic to
+estimate. Therefore, we here concentrate only on proposing a
+robust and reliable method, combining LD and sketches, to
+evaluate the relevance of LRD.
+III. MAWI DATASET
+A. Monitoring point
+The MAWI traffic repository archives traffic data collected
+from the WIDE backbone networks. The WIDE network
+(AS2500) is a Japanese academic network connecting universities
+and research institutes. The MAWI repository has
+been providing anonymized packet traces since 1999 (total
+volume of available data exceeds 1TB as of April 2008, cf.
+http://mawi.wide.ad.jp/ and [1]). A specific note
+here is that the data used here are all publicly available on
+the website.
+Our main datasets are daily packet traces captured at
+Samplepoint-B (hereafter B) from 2001/01 to 2006/06, then at
+Samplepoint-F (hereafter F) from 2006/10 to 2008/03. These
+are transit links of the WIDE network, and the link of B was
+replaced in July 2006 by the link F. Traces just after the
+upgrade are missing until 2006/10. At B, congestions were
+frequently observed, the link was a 100Mbps, with 18Mbps
+Committed Access Rate. The link for F is over-provisioned,
+it started as a full 100Mbps link and upgraded to a 1Gbps
+link with the capped bandwidth of 150Mbps in June 2007.
+Daily packet traces are captured from 2:00 pm to 2:15 pm
+everyday (Japanese Standard Time, UTC+9). The traces, with
+anonymized IP addresses and without payloads, are made
+available to the public along with a summary information web
+page about the traffic. Occasionally, 24-hour or longer traces
+are made captured. The 24-hour-long traces collected at F on
+2008/03/19 is used in Sec. IV-E to show the consistency of
+the obtained results. The WIDE transit link mostly carries
+trans-Pacific commodity traffic between Japanese research
+institutions and non-Japanese commercial networks, as WIDE
+peers with most major domestic ASes at the Internet Exchange
+Points it operates, and international traffic between academic
+networks goes through other international research networks.
+Traffic is also asymmetric as WIDE has other trans-Pacific
+links, meaning that many flows can be observed in one
+direction only. This compels us to study traffic separately for
+each direction, labeled US2Jp, for traffic going to Japan, and
+Jp2US, for outgoing traffic, as most traffic is between Japan
+and the USA. The traffic is highly aggregated: A 15-minutelong
+trace usually contains 300k-500k unique IP addresses,
+and various kinds of anomalies.
+Because the traces are taken on links used in real traffic
+conditions, the ground truth is not always known about the
+whys and whens for some specific events. For instance, there
+is no control and only scarce explanation usually about why
+the used bandwidth increases or not. One goal of this study
+is to show that a proper methodology as proposed here gives
+most of the information about what happened in a trace, both
+in terms of statistics and flow or packet characteristics.
+B. Throughput Evolution
+Strong variability: Fig. 1 displays throughput evolutions, and
+their intraday variabilities (measured as standard deviations
+(STD) computed around 1s time window averages). A wide
+range of throughput values and huge intraday variabilities
+(STD varies by a factor of 10) are observed, together with
+a global increase of throughput from 100 kbps in 2001 to
+more than 12 Mbps in 2008. At B, the load steadily increases
+over years up to the link capacity. The upgrade from B to F
+induced a significant change in average throughput (currently
+varying between 5 and 10 Mbps). The datasets enable then the
+study of the evolution of the traffic over 7 years, under both
+congested and over-provisioned conditions.
+Congestion periods: B experienced several long lasting congestions
+(shown in Fig. 1): US2Jp, from 2003/04 to 2004/10
+and from 2005/09 to 2006/06; Jp2US, from 2005/09 to
+2006/06. The byte throughput is close to constant with a low
+level of fluctuations (80% drops in STD). Although drops
+in STD are long in duration, they do not allow detection
+of congestion, as short time fluctuations can locally have
+amplitudes of same order.
+Specific periods: Two periods with unusual traffic behavior
+(gray-shaded areas in Fig. 1) call for specific comments. From
+2003/05 to 2004/03, Jp2US traffic underwent a severe volume
+decrease (Fig. 1, left). This had likely been caused by a
+change in the routing policy or by upward link congestions.
+Interestingly, despite this low volume, the traffic composition
+and its statistical characterization have not been significantly
+affected. From 2004/07 to 2005/04, US2Jp (Fig. 1, right),
+strong fluctuations in packet number are observed (STD being
+extremely high) due to massive activities of the Sasser worm
+(see also Sec. III-C).
+C. Protocol and Application Breakdown
+Methodology: Protocols, applications and anomaly breakdowns
+(shown in Fig. 2 for both directions) are first obtained
+from classical procedures, using protocol breakdown then a
+Port number based identification. Unknown port numbers are
+found associated to dynamic ports larger than 1024. Those
+packets were shown to be mostly linked to P2P hiding
